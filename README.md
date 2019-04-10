@@ -47,9 +47,9 @@ Because of the factors of the solve time being so many and complex, it's very di
 2. Bruteforce is dependent on a random key. That means that you only know the average solve time. In theory it could be solved first try.
 3. Because the time complexity of a bruteforce is exponential, this gives little control of the exact solve time.
 
-Here is an example of the average solve times I got on a Intel i7-4710HQ (8) @ 3.500GHz.
+Here is an example of the average solve times I got on a two different CPUs.
 
-| Difficulty | Average Solve Time (i7-4710HQ @ 3.5GHz) | Average Solve Time (i7-7700K @ 4.5GHz) |
+| Difficulty | i7-4710HQ @ 3.5GHz | i7-7700K @ 4.5GHz |
 |----|------------------|-------------------|
 | 0  | 0.000038 seconds | 0.000034 seconds  |
 | 1  | 0.000075 seconds | 0.000068 seconds  |
