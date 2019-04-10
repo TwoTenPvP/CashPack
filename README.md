@@ -51,21 +51,21 @@ Here is an example of the average solve times I got on a two different CPUs.
 
 | Difficulty | i7-4710HQ @ 3.5GHz | i7-7700K @ 4.5GHz | ARMv7 (v7l) @ 1.4GHz | Phenom II X6 1090T @ 3.2GHz |
 |---------|------------------|-------------------|------------------|-------------------|
-| 0 bits  | 0.000038 seconds | 0.000034 seconds  | 0.000871 seconds | 0,000055 seconds  |
-| 1 bits  | 0.000075 seconds | 0.000068 seconds  | 0.001742 seconds | 0,000109 seconds  |
-| 2 bits  | 0.000151 seconds | 0.000136 seconds  | 0.003485 seconds | 0,000219 seconds  |
-| 3 bits  | 0.000301 seconds | 0.000271 seconds  | 0.006969 seconds | 0,000438 seconds  |
-| 4 bits  | 0.000602 seconds | 0.000543 seconds  | 0.013939 seconds | 0,000875 seconds  |
-| 5 bits  | 0.001204 seconds | 0.001086 seconds  | 0.027877 seconds | 0,001751 seconds  |
-| 6 bits  | 0.002408 seconds | 0.002172 seconds  | 0.055755 seconds | 0,003501 seconds  |
-| 7 bits  | 0.004817 seconds | 0.004344 seconds  | 0.111509 seconds | 0,007003 seconds  |
-| 8 bits  | 0.009633 seconds | 0.008688 seconds  | 0.223019 seconds | 0,014005 seconds  |
-| 9 bits  | 0.019267 seconds | 0.017375 seconds  | 0.446038 seconds | 0,028011 seconds  |
-| 10 bits | 0.038533 seconds | 0.034751 seconds  | 0.892075 seconds | 0,056021 seconds  |
-| 11 bits | 0.077067 seconds | 0.069502 seconds  | 2 seconds        | 0,112042 seconds  |
-| 12 bits | 0.154133 seconds | 0.139004 seconds  | 4 seconds        | 0,224085 seconds  |
-| 13 bits | 0.308267 seconds | 0.278008 seconds  | 7 seconds        | 0,448169 seconds  |
-| 14 bits | 0.616533 seconds | 0.556016 seconds  | 14 seconds       | 0,896339 seconds  |
+| 0 bits  | 0.000038 seconds | 0.000034 seconds  | 0.000871 seconds | 0.000055 seconds  |
+| 1 bits  | 0.000075 seconds | 0.000068 seconds  | 0.001742 seconds | 0.000109 seconds  |
+| 2 bits  | 0.000151 seconds | 0.000136 seconds  | 0.003485 seconds | 0.000219 seconds  |
+| 3 bits  | 0.000301 seconds | 0.000271 seconds  | 0.006969 seconds | 0.000438 seconds  |
+| 4 bits  | 0.000602 seconds | 0.000543 seconds  | 0.013939 seconds | 0.000875 seconds  |
+| 5 bits  | 0.001204 seconds | 0.001086 seconds  | 0.027877 seconds | 0.001751 seconds  |
+| 6 bits  | 0.002408 seconds | 0.002172 seconds  | 0.055755 seconds | 0.003501 seconds  |
+| 7 bits  | 0.004817 seconds | 0.004344 seconds  | 0.111509 seconds | 0.007003 seconds  |
+| 8 bits  | 0.009633 seconds | 0.008688 seconds  | 0.223019 seconds | 0.014005 seconds  |
+| 9 bits  | 0.019267 seconds | 0.017375 seconds  | 0.446038 seconds | 0.028011 seconds  |
+| 10 bits | 0.038533 seconds | 0.034751 seconds  | 0.892075 seconds | 0.056021 seconds  |
+| 11 bits | 0.077067 seconds | 0.069502 seconds  | 2 seconds        | 0.112042 seconds  |
+| 12 bits | 0.154133 seconds | 0.139004 seconds  | 4 seconds        | 0.224085 seconds  |
+| 13 bits | 0.308267 seconds | 0.278008 seconds  | 7 seconds        | 0.448169 seconds  |
+| 14 bits | 0.616533 seconds | 0.556016 seconds  | 14 seconds       | 0.896339 seconds  |
 | 15 bits | 1 seconds        | 1 seconds         | 29 seconds       | 2 seconds         |
 | 16 bits | 2 seconds        | 2 seconds         | 57 seconds       | 4 seconds         |
 | 17 bits | 5 seconds        | 4 seconds         | 114 seconds      | 7 seconds         |
