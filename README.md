@@ -44,7 +44,7 @@ Because solving can be parallelized, solve times can vary greatly. This also app
 ## Estimated Time
 Because of the factors of the solve time being so many and complex, it's very difficult to get an accurate unpack date. There reasons are:
 1. Solve can be parallelized which can make the solve time many **times** less, this has to be accounted for.
-2. Bruteforce is dependent on a random key. That means that you onlw know the average solve time. In theory it could be solved first try.
+2. Bruteforce is dependent on a random key. That means that you only know the average solve time. In theory it could be solved first try.
 3. Because the time complexity of a bruteforce is exponential, this gives little control of the exact solve time.
 
 Here is an example of the estimated solve times I got on a Intel i7-4710HQ (8) @ 3.500GHz.
