@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashPack", "CashPack\CashPack.csproj", "{15BFE320-7A59-404F-A0A2-A940491E13CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashPack.Example", "CashPack.Example\CashPack.Example.csproj", "{2FECD43A-BFB9-4751-9A23-5E221F39E7B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashPack.Tests", "CashPack.Tests\CashPack.Tests.csproj", "{AF5D3776-6CBA-447F-9D4B-24941C328306}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15BFE320-7A59-404F-A0A2-A940491E13CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15BFE320-7A59-404F-A0A2-A940491E13CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15BFE320-7A59-404F-A0A2-A940491E13CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15BFE320-7A59-404F-A0A2-A940491E13CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FECD43A-BFB9-4751-9A23-5E221F39E7B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FECD43A-BFB9-4751-9A23-5E221F39E7B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FECD43A-BFB9-4751-9A23-5E221F39E7B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FECD43A-BFB9-4751-9A23-5E221F39E7B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF5D3776-6CBA-447F-9D4B-24941C328306}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF5D3776-6CBA-447F-9D4B-24941C328306}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF5D3776-6CBA-447F-9D4B-24941C328306}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF5D3776-6CBA-447F-9D4B-24941C328306}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
