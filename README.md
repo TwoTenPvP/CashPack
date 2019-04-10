@@ -49,7 +49,7 @@ Because of the factors of the solve time being so many and complex, it's very di
 
 Here is an example of the average solve times I got on a two different CPUs.
 
-| Difficulty | i7-4710HQ @ 3.5GHz | i7-7700K @ 4.5GHz | ARMv7 rev 4 (v7l) (4) @ 1.4GHz (Raspberry Pi 3 B+) |
+| Difficulty | i7-4710HQ @ 3.5GHz | i7-7700K @ 4.5GHz | ARMv7 rev 4 (v7l) @ 1.4GHz |
 |---------|------------------|-------------------|------------------|
 | 0 bits  | 0.000038 seconds | 0.000034 seconds  | 0.000871 seconds |
 | 1 bits  | 0.000075 seconds | 0.000068 seconds  | 0.001742 seconds |
