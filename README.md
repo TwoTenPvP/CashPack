@@ -48,6 +48,7 @@ Because of the factors of the solve time being so many and complex, it's very di
 3. Because the time complexity of a bruteforce is exponential, this gives little control of the exact solve time.
 
 Here is an example of the estimated solve times I got on a Intel i7-4710HQ (8) @ 3.500GHz.
+
 | Difficulty | Estimated Solve Time |
 |------------|----------------------|
 | 0 | 0.000038 seconds |
