@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Security.Cryptography;
 
 namespace CashPack
@@ -42,62 +41,75 @@ namespace CashPack
             return ushort.MaxValue;
         }
 
+        /// <summary>
+        /// Calculates the time in seconds for each bit difficulty.
+        /// </summary>
+        /// <returns>The time in seconds it takes to unpack the payload on average for the bit values up to the bits parameter.</returns>
+        /// <param name="payload">The payload to calculate for.</param>
+        /// <param name="bits">The amount of bits to calculate up to.</param>
+        public static ulong[] CalculateTimeForDifficultyLookup(byte[] payload, byte bits = 64)
+        {
+            ulong decryptsPerSecond = (ulong)GetSolveAttemptsPerSecond(payload, EstimationAccuracy.Normal);
+
+            ulong[] results = new ulong[64];
+
+            for (ushort i = 0; i < results.Length; i++)
+            {
+                results[i] = ((ulong)Math.Pow(2, i) / decryptsPerSecond);
+            }
+
+            return results;
+        }
+
         private static double GetSolveAttemptsPerSecond(byte[] payload, EstimationAccuracy accuracy)
         {
-            CashPack pack = Packer.Pack(payload, 128);
-            
-            Stopwatch watch  = new Stopwatch();
-            
-            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            CashPack pack = Packer.Pack(payload, (ushort)(payload.Length * 8));
+
+            Stopwatch watch = new Stopwatch();
+
+            int decrypts = 0;
+
+            watch.Start();
+
+            byte[] currentKey = new byte[pack.Key.Length];
+            Array.Copy(pack.Key, 0, currentKey, 0, pack.Key.Length);
+
+            byte[] solveWorkspace = new byte[pack.Payload.Length];
+
+            while (watch.ElapsedMilliseconds < ((uint)accuracy * 1000))
             {
-                // Random key and IV, we are only testing a fail
-                aes.GenerateIV();
-                aes.GenerateKey();
-                
-                aes.Padding = PaddingMode.PKCS7;
-                aes.Mode = CipherMode.CBC;
 
-                int decrypts = 0;
-                
-                watch.Start();
-                
-                while (watch.ElapsedMilliseconds < ((uint)accuracy * 1000))
+                for (int i = 0; i < pack.Payload.Length; i++)
                 {
-                    using (MemoryStream outputStream = new MemoryStream())
+                    solveWorkspace[i] = (byte)(pack.Payload[i] ^ currentKey[i]);
+                }
+
+                // IMPORTANT: Use HMAC instead of Checksum
+                // This prevents you to do attacks where you can correlate known payloads
+                // And a CashPack without ever solving it.
+                using (HMACSHA512 sha = new HMACSHA512(currentKey))
+                {
+                    byte[] hash = sha.ComputeHash(solveWorkspace);
+
+                    for (int i = 0; i < pack.Hash.Length; i++)
                     {
-                        using (ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
+                        if (pack.Hash[i] != hash[i])
                         {
-                            try
-                            {
-                                CryptoStream stream = new CryptoStream(outputStream, decryptor, CryptoStreamMode.Write);
-
-                                stream.Write(pack.Payload, 0, pack.Payload.Length);
-
-                                stream.FlushFinalBlock();
-                                
-                                using (HMACSHA512 sha = new HMACSHA512(aes.Key))
-                                {
-                                    outputStream.Position = 0;
-
-                                    sha.ComputeHash(outputStream);
-
-                                    outputStream.ToArray();
-                                }
-                            }
-                            catch (CryptographicException)
-                            {
-                                // Thrown when padding gets fucked up by invalid key (Can cause Stackoverflow in Mono)
-                            }
+                            break;
                         }
                     }
-
-                    decrypts++;
                 }
-                
-                watch.Stop();
 
-                return decrypts / (watch.ElapsedMilliseconds / 1000d);
+                // Increment key
+                ulong keyAsNumber = BitHelper.KeyToNumber(currentKey, pack.BitDifficulty);
+                BitHelper.SetLastBitNumberBytes(currentKey, keyAsNumber + 1, pack.BitDifficulty);
+
+                decrypts++;
             }
+
+            watch.Stop();
+
+            return decrypts / (watch.ElapsedMilliseconds / 1000d);
         }
     }
 }

@@ -23,7 +23,6 @@ namespace CashPack
                 BitDifficulty = pack.BitDifficulty,
                 Hash = pack.Hash,
                 Payload = pack.Payload,
-                IV = pack.IV,
                 WorkingIteration = 0
             };
         }
@@ -39,7 +38,6 @@ namespace CashPack
             BitDifficulty = pack.BitDifficulty;
             Hash = pack.Hash;
             Payload = pack.Payload;
-            IV = pack.IV;
             WorkingIteration = iterations;
         }
 

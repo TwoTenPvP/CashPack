@@ -10,9 +10,13 @@ namespace CashPack
             int firstByteBits = totalBits % 8;
             int wholeBytes = (totalBits - firstByteBits) / 8;
 
-            byte halfByte = key[key.Length - wholeBytes - 1];
-            
-            ulong keyToNumber = (firstByteBits == 0 ? 0U : ((byte)(((byte)(halfByte << (8 - firstByteBits))) >> (8 - firstByteBits))));
+            ulong keyToNumber = 0U;
+
+            if (firstByteBits > 0)
+            {
+                byte halfByte = key[key.Length - wholeBytes - 1];
+                keyToNumber = ((byte)(((byte)(halfByte << (8 - firstByteBits))) >> (8 - firstByteBits)));
+            }
             
             for (int i = (key.Length) - wholeBytes; i < key.Length; i++)
             {
@@ -28,21 +32,24 @@ namespace CashPack
         {
             int firstByteBits = totalBits % 8;
             int wholeBytes = (totalBits - firstByteBits) / 8;
-            
-            // First byte
-            byte halfByte = key[key.Length - wholeBytes - 1];
 
-            // Drop the last bits
-            halfByte = ((byte) (((byte) (halfByte >> firstByteBits)) << firstByteBits));
+            if (firstByteBits > 0)
+            {
+                // First byte
+                byte halfByte = key[key.Length - wholeBytes - 1];
 
-            // Get the mask
-            byte lastByteFromNumber = (byte)(number >> (wholeBytes * 8));
+                // Drop the last bits
+                halfByte = ((byte)(((byte)(halfByte >> firstByteBits)) << firstByteBits));
 
-            // Set value
-            halfByte |= lastByteFromNumber;
+                // Get the mask
+                byte lastByteFromNumber = (byte)(number >> (wholeBytes * 8));
 
-            // Set in key
-            key[key.Length - wholeBytes - 1] = halfByte;
+                // Set value
+                halfByte |= lastByteFromNumber;
+
+                // Set in key
+                key[key.Length - wholeBytes - 1] = halfByte;
+            }
             
             for (int i = key.Length - wholeBytes; i < key.Length; i++)
             {
@@ -56,14 +63,17 @@ namespace CashPack
         {
             int firstByteBits = totalBits % 8;
             int wholeBytes = (totalBits - firstByteBits) / 8;
-            
-            byte halfByte = key[key.Length - wholeBytes - 1];
 
-            key[key.Length - wholeBytes - 1] = (byte)((byte)(halfByte >> firstByteBits) << firstByteBits);
-
-            for (int i = key.Length - wholeBytes; i < key.Length; i++)
+            if (firstByteBits > 0)
             {
-                key[i] = 0;
+                byte halfByte = key[key.Length - wholeBytes - 1];
+
+                key[key.Length - wholeBytes - 1] = (byte)((byte)(halfByte >> firstByteBits) << firstByteBits);
+
+                for (int i = key.Length - wholeBytes; i < key.Length; i++)
+                {
+                    key[i] = 0;
+                }
             }
         }
     }

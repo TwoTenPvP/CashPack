@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Security.Cryptography;
 
 namespace CashPack
@@ -18,67 +17,44 @@ namespace CashPack
         {
             byte[] currentKey = new byte[pack.Key.Length];
             Array.Copy(pack.Key, 0, currentKey, 0, pack.Key.Length);
-            
-            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+
+            byte[] solveWorkspace = new byte[pack.Payload.Length];
+
+
+            while (true)
             {
-                aes.IV = pack.IV;
-                aes.Padding = PaddingMode.PKCS7;
-                aes.Mode = CipherMode.CBC;
-                
-                while (true)
+                for (int i = 0; i < pack.Payload.Length; i++)
                 {
-                    // Set key
-                    aes.Key = currentKey;     
-                    
-                    using (MemoryStream outputStream = new MemoryStream())
+                    solveWorkspace[i] = (byte)(pack.Payload[i] ^ currentKey[i]);
+                }
+
+                // IMPORTANT: Use HMAC instead of Checksum
+                // This prevents you to do attacks where you can correlate known payloads
+                // And a CashPack without ever solving it.
+                using (HMACSHA512 sha = new HMACSHA512(currentKey))
+                {
+                    byte[] hash = sha.ComputeHash(solveWorkspace);
+
+                    bool failed = false;
+
+                    for (int i = 0; i < pack.Hash.Length; i++)
                     {
-                        using (ICryptoTransform decryptor = aes.CreateDecryptor(currentKey, pack.IV))
+                        if (pack.Hash[i] != hash[i])
                         {
-                            try
-                            {
-                                CryptoStream stream = new CryptoStream(outputStream, decryptor, CryptoStreamMode.Write);
-
-                                stream.Write(pack.Payload, 0, pack.Payload.Length);
-
-                                stream.FlushFinalBlock();
-
-                                // IMPORTANT: Use HMAC instead of Checksum
-                                // This prevents you to do attacks where you can correlate known payloads
-                                // And a CashPack without ever solving it.
-                                using (HMACSHA512 sha = new HMACSHA512(currentKey))
-                                {
-                                    outputStream.Position = 0;
-
-                                    byte[] hash = sha.ComputeHash(outputStream);
-
-                                    bool failed = false;
-
-                                    for (int i = 0; i < pack.Hash.Length; i++)
-                                    {
-                                        if (pack.Hash[i] != hash[i])
-                                        {
-                                            failed = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (!failed)
-                                    {
-                                        return outputStream.ToArray();
-                                    }
-                                }
-                            }
-                            catch (CryptographicException)
-                            {
-                                // Thrown when padding gets fucked up by invalid key (Can cause Stackoverflow in Mono)
-                            }
+                            failed = true;
+                            break;
                         }
                     }
 
-                    // Increment key
-                    ulong keyAsNumber = BitHelper.KeyToNumber(currentKey, pack.BitDifficulty);
-                    BitHelper.SetLastBitNumberBytes(currentKey, keyAsNumber + 1, pack.BitDifficulty);
+                    if (!failed)
+                    {
+                        return solveWorkspace;
+                    }
                 }
+
+                // Increment key
+                ulong keyAsNumber = BitHelper.KeyToNumber(currentKey, pack.BitDifficulty);
+                BitHelper.SetLastBitNumberBytes(currentKey, keyAsNumber + 1, pack.BitDifficulty);
             }
         }
 
@@ -93,76 +69,52 @@ namespace CashPack
         {
             byte[] currentKey = new byte[pack.Key.Length];
             Array.Copy(pack.Key, 0, currentKey, 0, pack.Key.Length);
-            
+
             BitHelper.SetLastBitNumberBytes(currentKey, pack.WorkingIteration, pack.BitDifficulty);
-            
-            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+
+            byte[] solveWorkspace = new byte[pack.Payload.Length];
+
+            for (int i = 0; i < iterations; i++)
             {
-                aes.IV = pack.IV;
-                aes.Padding = PaddingMode.PKCS7;
-                aes.Mode = CipherMode.CBC;
-
-                for (int i = 0; i < iterations; i++)
+                for (int x = 0; x < pack.Payload.Length; x++)
                 {
-                    // Set key
-                    aes.Key = currentKey;
+                    solveWorkspace[x] = (byte)(pack.Payload[x] ^ currentKey[x]);
+                }
 
-                    using (MemoryStream outputStream = new MemoryStream())
+                // IMPORTANT: Use HMAC instead of Checksum
+                // This prevents you to do attacks where you can correlate known payloads
+                // And a CashPack without ever solving it.
+                using (HMACSHA512 sha = new HMACSHA512(currentKey))
+                {
+                    byte[] hash = sha.ComputeHash(solveWorkspace);
+
+                    bool failed = false;
+
+                    for (int x = 0; x < pack.Hash.Length; x++)
                     {
-                        using (ICryptoTransform decryptor = aes.CreateDecryptor(currentKey, pack.IV))
+                        if (pack.Hash[x] != hash[x])
                         {
-                            try
-                            {
-                                CryptoStream stream = new CryptoStream(outputStream, decryptor, CryptoStreamMode.Write);
-
-                                stream.Write(pack.Payload, 0, pack.Payload.Length);
-
-                                stream.FlushFinalBlock();
-
-                                // IMPORTANT: Use HMAC instead of Checksum
-                                // This prevents you to do attacks where you can correlate known payloads
-                                // And a CashPack without ever solving it.
-                                using (HMACSHA512 sha = new HMACSHA512(currentKey))
-                                {
-                                    outputStream.Position = 0;
-
-                                    byte[] hash = sha.ComputeHash(outputStream);
-
-                                    bool failed = false;
-
-                                    for (int x = 0; x < pack.Hash.Length; x++)
-                                    {
-                                        if (pack.Hash[x] != hash[x])
-                                        {
-                                            failed = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (!failed)
-                                    {
-                                        result = outputStream.ToArray();
-                                        pack.WorkingIteration = BitHelper.KeyToNumber(currentKey, pack.BitDifficulty);
-                                        return true;
-                                    }
-                                }
-                            }
-                            catch (CryptographicException)
-                            {
-                                // Thrown when padding gets fucked up by invalid key (Can cause Stackoverflow in Mono)
-                            }
+                            failed = true;
+                            break;
                         }
                     }
 
-                    // Increment key
-                    ulong keyAsNumber = BitHelper.KeyToNumber(currentKey, pack.BitDifficulty);
-                    BitHelper.SetLastBitNumberBytes(currentKey, keyAsNumber + 1, pack.BitDifficulty);
+                    if (!failed)
+                    {
+                        result = solveWorkspace;
+                        pack.WorkingIteration = BitHelper.KeyToNumber(currentKey, pack.BitDifficulty);
+                        return true;
+                    }
                 }
 
-                result = null;
-                pack.WorkingIteration = BitHelper.KeyToNumber(currentKey, pack.BitDifficulty);
-                return false;
+                // Increment key
+                ulong keyAsNumber = BitHelper.KeyToNumber(currentKey, pack.BitDifficulty);
+                BitHelper.SetLastBitNumberBytes(currentKey, keyAsNumber + 1, pack.BitDifficulty);
             }
+
+            result = null;
+            pack.WorkingIteration = BitHelper.KeyToNumber(currentKey, pack.BitDifficulty);
+            return false;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace CashPack.Example
@@ -10,6 +11,26 @@ namespace CashPack.Example
         
         public static void Main(string[] args)
         {
+            // Alloc AES key
+            byte[] key = new byte[32];
+
+            // Generate AES ey
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(key);
+            }
+
+            // Get the amount of seconds for each difficulty
+            ulong[] res = Calculator.CalculateTimeForDifficultyLookup(key);
+
+            // Print all times
+            for (int i = 0; i < res.Length; i++)
+            {
+                // Print time for i difficulty
+                Console.WriteLine("Difficulty " + i + " would take an average of " + res[i] + " seconds to unpack");
+            }
+
+
             // Encode the payload as bytes.
             byte[] decryptedPayload = Encoding.UTF8.GetBytes(Lipsum);
 

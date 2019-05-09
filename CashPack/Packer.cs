@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 namespace CashPack
 {
@@ -18,51 +17,40 @@ namespace CashPack
         {
             CashPack pack = new CashPack()
             {
-                BitDifficulty = bitDifficulty
+                BitDifficulty = bitDifficulty,
             };
 
-            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            // Alloc key
+            byte[] fullKey = new byte[payload.Length];
+
+            // Create key
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
             {
-                aes.Padding = PaddingMode.PKCS7;
-                aes.Mode = CipherMode.CBC;
-
-                aes.GenerateKey();
-                aes.GenerateIV();
-
-                pack.IV = aes.IV;
-
-                // IMPORTANT: Use HMAC instead of Checksum
-                // This prevents you to do attacks where you can correlate known payloads
-                // And a CashPack without ever solving it.
-                using (HMACSHA512 sha = new HMACSHA512(aes.Key))
-                {
-                    pack.Hash = sha.ComputeHash(payload);
-                }
-
-                using (MemoryStream outputStream = new MemoryStream())
-                {
-                    using (ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
-                    {
-                        using (CryptoStream stream = new CryptoStream(outputStream, encryptor, CryptoStreamMode.Write))
-                        {
-                            stream.Write(payload, 0, payload.Length);
-
-                            stream.FlushFinalBlock();
-
-                            pack.Payload = outputStream.ToArray();
-
-                            // Reduce key
-                            byte[] reducedKey = aes.Key;
-                            BitHelper.ReduceKey(reducedKey, bitDifficulty);
-                            
-                            
-                            pack.Key = reducedKey;
-                        }
-                    }
-                }
-
-                return pack;
+                rng.GetBytes(fullKey);
             }
+
+            // HMAC Key
+            using (HMACSHA512 sha = new HMACSHA512(fullKey))
+            {
+                pack.Hash = sha.ComputeHash(payload);
+            }
+
+            // Alloc payload
+            pack.Payload = new byte[payload.Length];
+
+            // Encrypt payload
+            for (int i = 0; i < pack.Payload.Length; i++)
+            {
+                pack.Payload[i] = (byte)(payload[i] ^ fullKey[i]);
+            }
+
+            // Reduce key
+            byte[] reducedKey = fullKey;
+            BitHelper.ReduceKey(reducedKey, bitDifficulty);
+
+            pack.Key = reducedKey;
+
+            return pack;
         }
     }
 }

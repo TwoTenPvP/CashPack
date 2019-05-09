@@ -10,10 +10,6 @@ namespace CashPack
         /// </summary>
         public byte[] Payload { get; internal set; }
         /// <summary>
-        /// The IV used to encrypt the payload.
-        /// </summary>
-        public byte[] IV { get; internal set; }
-        /// <summary>
         /// The known parts of the key. Should end with (BitDifficulty) amount of zeros.
         /// </summary>
         public byte[] Key { get; internal set; }
@@ -30,14 +26,12 @@ namespace CashPack
         /// Creates a new CashPack. Only use this to reconstruct properly created CashPacks.
         /// </summary>
         /// <param name="encryptedPayload">The encrypted payload.</param>
-        /// <param name="encryptionIv">The encryption IV.</param>
         /// <param name="reducedEncryptionKey">The reduced encryption key.</param>
         /// <param name="sha512Hash">The hash of the decrypted payload.</param>
         /// <param name="bitDifficulty">The amount of stripped bits in the key.</param>
-        public CashPack(byte[] encryptedPayload, byte[] encryptionIv, byte[] reducedEncryptionKey, byte[] sha512Hash, ushort bitDifficulty)
+        public CashPack(byte[] encryptedPayload, byte[] reducedEncryptionKey, byte[] sha512Hash, ushort bitDifficulty)
         {
             this.Payload = encryptedPayload;
-            this.IV = encryptionIv;
             this.Key = reducedEncryptionKey;
             this.Hash = sha512Hash;
             this.BitDifficulty = bitDifficulty;
